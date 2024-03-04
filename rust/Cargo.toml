@@ -1,14 +1,19 @@
 [package]
-name = "1brc"
+name = "rust-1brc"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 fast-float = "0.2.0"
 lazy_static = "1.4.0"
+memchr = "2.7.1"
 memmap = "0.7.0"
 rayon = "1.9.0"
 rustc-hash = "1.1.0"
 
 [profile.release]
 debug = 1
+
+[profile.profiling]
+inherits = "release"
+debug = true
