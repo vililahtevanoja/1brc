@@ -2,6 +2,7 @@
 #![feature(test)]
 #![feature(byte_slice_trim_ascii)]
 #![feature(slice_split_once)]
+#![allow(dead_code)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -155,28 +156,56 @@ impl MeasurementStatsMask {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let file = "../_data/measurements_1b.txt";
-    if args.len() == 1 {
-        println!(
-            "{}",
-            handle_fhash_dint_read_until_mut_cparse_par("../_data/measurements_1b.txt")
-        )
-    }
-    let res = match args[1].as_str() {
-        "00" => handle_naive(file),
-        "01" => handle_fhash(file),
-        "02" => handle_fhash_ffloat(file),
-        "03" => handle_fhash_ffloat_read_until(file),
-        "04" => handle_fhash_lookup_read_until(file),
-        "05" => handle_fhash_ffloat_read_until_mut(file),
-        "06" => handle_fhash_dfloat_read_until_mut(file),
-        "07" => handle_fhash_dint_read_until_mut(file),
-        "08" => handle_fhash_dint_read_until_mut_memchr(file),
-        "09" => handle_fhash_dint_read_until_mut_memchr_cparse(file),
-        "10" => handle_fhash_dint_read_until_mut_cparse_par(file),
-        _ => handle_fhash_dint_read_until_mut_cparse_par(file),
+    let res = match args.get(1).map(|a| a.as_str()) {
+        Some("00") => {
+            println!("handle_naive");
+            handle_naive(file)
+        }
+        Some("01") => {
+            println!("handle_fhash");
+            handle_fhash(file)
+        }
+        Some("02") => {
+            println!("handle_fhash_ffloat");
+            handle_fhash_ffloat(file)
+        }
+        Some("03") => {
+            println!("handle_fhash_ffloat_read_until");
+            handle_fhash_ffloat_read_until(file)
+        }
+        Some("04") => {
+            println!("handle_fhash_lookup_read_until");
+            handle_fhash_lookup_read_until(file)
+        }
+        Some("05") => {
+            println!("handle_fhash_ffloat_read_until_mut");
+            handle_fhash_ffloat_read_until_mut(file)
+        }
+        Some("06") => {
+            println!("handle_fhash_dfloat_read_until_mut");
+            handle_fhash_dfloat_read_until_mut(file)
+        }
+        Some("07") => {
+            println!("handle_fhash_dint_read_until_mut");
+            handle_fhash_dint_read_until_mut(file)
+        }
+        Some("08") => {
+            println!("handle_fhash_dint_read_until_mut_memchr");
+            handle_fhash_dint_read_until_mut_memchr(file)
+        }
+        Some("09") => {
+            println!("handle_fhash_dint_read_until_mut_memchr_cparse");
+            handle_fhash_dint_read_until_mut_memchr_cparse(file)
+        }
+        Some("10") => {
+            println!("handle_fhash_dint_read_until_mut_cparse_par");
+            handle_fhash_dint_read_until_mut_cparse_par(file)
+        }
+        _ => {
+            println!("handle_fhash_dint_read_until_mut_cparse_par");
+            handle_fhash_dint_read_until_mut_cparse_par(file)
+        }
     };
-    let res = handle_fhash_dint_read_until_mut_cparse_par("../_data/measurements_1b.txt");
-    // let res = handle_fhash_dint_read_until_mut_memchr_cparse("../_data/measurements_1b.txt");
     println!("{}", res)
 }
 
@@ -575,13 +604,12 @@ fn handle_fhash_dint_read_until_mut_memchr(file: &str) -> String {
 }
 
 fn parse<R: Read>(r: &mut R) -> FxHashMap<Vec<u8>, MeasurementStatsInt> {
-    let mut read = 0;
     let mut buf = [0u8; 4096];
     let mut m: FxHashMap<Vec<u8>, MeasurementStatsInt> = FxHashMap::default();
     let mut spillover: Vec<u8> = Vec::with_capacity(128);
     loop {
         let mut curr = 0;
-        read = r.read(&mut buf).unwrap();
+        let read = r.read(&mut buf).unwrap();
         if read == 0 {
             break;
         }
