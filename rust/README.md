@@ -11,3 +11,5 @@ Run tests: `cargo test`
 Run benchmarks: `cargo bench`
 
 Run application: `cargo run --release`
+
+Run application with different implementations (valid implementation parameters `00`-`10`): `cargo run --release <implementation>`
